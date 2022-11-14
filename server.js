@@ -2,7 +2,17 @@ const fastify = require("fastify")({logger: false})
 const mongoose = require("mongoose")
 const Url = require("./models/url")
 const crypto = require("crypto")
+const path = require("path")
 require("dotenv").config()
+
+
+fastify.register(require("@fastify/formbody"))
+fastify.register(require("@fastify/view"), {
+  engine: {
+    ejs: require("ejs")
+  },
+  root: path.join(__dirname, "views")
+})
 
 mongoose.connect(process.env.MONGO_URI, 
   { 
@@ -10,7 +20,7 @@ mongoose.connect(process.env.MONGO_URI,
     useUnifiedTopology: true 
   })
   .then(() => console.log("Connection réussie à la base mongoDb"))
-  .catch((err) => console.log(error))
+  .catch((error) => console.log(error))
 
 
 const getOptions = {
@@ -37,7 +47,7 @@ const getOptions = {
 }
 
 
-fastify.post("/url", getOptions, async (req, reply) => {
+fastify.post("/url", async (req, reply) => {
 
   const code = crypto.randomBytes(8).toString("base64").slice(0, 8)
 
@@ -48,14 +58,18 @@ fastify.post("/url", getOptions, async (req, reply) => {
   })
 
   try{
-    const result = await url.save()
-    reply.code(201).send(result)
+    await url.save()
+    reply.redirect("/")
+    
   }catch(err){
     reply.code(400).send("creation failed")
+    console.log(err)
   }
-  
 
+})
 
+fastify.get("/", (req, reply) => {
+  reply.view("index.ejs", {data: "text", text: "benamar mehdi"})
 })
 
 fastify.listen({port: 5000}, (err) => {
