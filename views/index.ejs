@@ -1,7 +1,10 @@
 <%- include("partials/header") -%>
   <form action="url" method="post">
     <label for="longUrl">Url</label>
-    <input type="url" name="longUrl" id="longUrl" placeholder="Http(s)://">
+    <input type="text" name="longUrl" id="longUrl" placeholder="Http(s)://">
     <button type="submit">Générer</button>
   </form>
+  <% if(typeof message !== 'undefined') { %>
+    <p><%= message %></p>
+  <% } %> 
 <%- include("partials/footer") -%>
