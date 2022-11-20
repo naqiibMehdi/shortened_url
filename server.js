@@ -23,6 +23,12 @@ mongoose.connect(process.env.MONGO_URI,
 
 fastify.register(require("./routes/url"))
 
+fastify.setErrorHandler((error, req, reply) => {
+  if(error){
+
+    reply.view("index.ejs", {err: error.message.split(":")[2]})
+  }
+})
 
 
 fastify.listen({port: 5000}, (err) => {

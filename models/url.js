@@ -1,14 +1,10 @@
-const crypto = require("crypto")
 const mongoose = require("mongoose")
 
 const urlSchema = mongoose.Schema({
-  codeUrl: {
-    type: String, 
-    default: crypto.randomBytes(8).toString("base64").slice(0, 8) 
-  },
+  codeUrl: String,
   longUrl: {
     type: String, 
-    required: true,
+    required: [true, "Le champ doit être remplis !"],
     validate: {
       validator: function (url){
         return /^https?/.test(url)

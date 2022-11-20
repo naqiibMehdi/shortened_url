@@ -2,7 +2,7 @@ const crypto = require("crypto")
 const Url = require("../models/url")
 
 
-const getOptions = {
+const postOptions = {
   schema: {
     body: {
       type: "object",
@@ -15,39 +15,37 @@ const getOptions = {
       201: {
         type: "object",
         properties: {
-          codeUrl:{ type: "string"},
           longUrl:{ type: "string"},
           shortUrl:{ type: "string"},
-          create_at:{ type: "string"}
         }
       }
     }
   },
-  handler: async (req, reply) => {
+  handler: async (req, reply, next) => {
     const code = crypto.randomBytes(8).toString("base64").slice(0, 8)
 
     const url = new Url({
       ...req.body,
-      shortUrl: `${req.protocol}://${req.hostname}/${code}`,
+      codeUrl: code,
+      shortUrl: `${req.protocol}://${req.hostname}/${code}`
     })
 
     try {
-      await url.save()
-      reply.code(201).send("Url created !")
-      reply.redirect("/")
+      const result = await url.save()
+      reply.view("index.ejs", {result})
+      reply.redirect(302, "/")
 
     } catch (err) {
-      reply.redirect("/")
-      reply.view("index.ejs", {message: err.message})
+     return new Error(err)
     }
   }
 }
 
 
 function routes (fastify, opts, done){
-  fastify.post("/url", getOptions)
+  fastify.post("/url", postOptions)
   fastify.get("/", (req, reply) => {
-    reply.view("index.ejs", {message: ""})
+    reply.view("index.ejs", {result})
   })
   done()
 }
