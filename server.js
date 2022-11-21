@@ -1,15 +1,24 @@
 const fastify = require("fastify")({logger: false})
 const mongoose = require("mongoose")
+const fastifyStatic = require("@fastify/static")
 const path = require("path")
+const url = require("url")
 require("dotenv").config()
 
 fastify.register(require("@fastify/formbody"))
+
 fastify.register(require("@fastify/view"), {
   engine: {
     ejs: require("ejs")
   },
   root: path.join(__dirname, "views")
 })
+
+fastify.register(fastifyStatic, {
+  root: path.join(__dirname, "public"),
+  prefix: "/public/"
+})
+
 
 mongoose.connect(process.env.MONGO_URI, 
   { 

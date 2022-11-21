@@ -4,16 +4,17 @@
     <input type="text" name="longUrl" id="longUrl" placeholder="Http(s)://">
     <button type="submit">Générer</button>
   </form>
-   <% if(locals.err){ %>
-   <p><%= err %> </p>
-   <% } %>
+  <% if(locals.err){ %>
+    <p>
+      <%= err %>
+    </p>
+    <% } %>
 
-   <% if(locals.result){ %>
+  <% if(locals.result && locals.result.length> 0){ %>
     <div class="resultat">
-      <p>Lien: <a href="<%= result.shortUrl %>"><%= result.codeUrl %></a></p>
+      <p>Lien: <a href="<%= result[0].shortUrl %>"><%= result[0].codeUrl %></a></p>
     </div>
-   <% } %>  
-
-   <% console.log(locals) %> 
-    
+  <% } else { %>
+      <p></p>
+  <% } %>
 <%- include("partials/footer") -%>

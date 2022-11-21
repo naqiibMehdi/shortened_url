@@ -10,15 +10,6 @@ const postOptions = {
       properties: {
         longUrl: {type: "string"}
       }
-    },
-    response: {
-      201: {
-        type: "object",
-        properties: {
-          longUrl:{ type: "string"},
-          shortUrl:{ type: "string"},
-        }
-      }
     }
   },
   handler: async (req, reply, next) => {
@@ -31,8 +22,7 @@ const postOptions = {
     })
 
     try {
-      const result = await url.save()
-      reply.view("index.ejs", {result})
+      await url.save()
       reply.redirect(302, "/")
 
     } catch (err) {
@@ -42,11 +32,28 @@ const postOptions = {
 }
 
 
+const getOptions = {
+  handler: async (req, reply) => {
+    const result = await Url.find().sort({_id: -1}).limit(1)
+    return reply.view("index.ejs", {result})
+  }
+}
+
+const getOneOptions = {
+  handler: async (req, reply) => {
+    if (req.params.code) {
+      const url = await Url.findOne({ codeUrl: req.params.code })
+      if (url) {
+        reply.redirect(302, url.longUrl)
+      }
+    }
+  }
+}
+
 function routes (fastify, opts, done){
   fastify.post("/url", postOptions)
-  fastify.get("/", (req, reply) => {
-    reply.view("index.ejs", {result})
-  })
+  fastify.get("/", getOptions)
+  fastify.get("/:code", getOneOptions)
   done()
 }
 
