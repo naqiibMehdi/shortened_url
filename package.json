@@ -18,7 +18,7 @@
     "@fastify/view": "^7.1.2",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
-    "fastify": "^4.10.2",
+    "fastify": "^4.28.1",
     "mongoose": "^6.12.6"
   }
 }
